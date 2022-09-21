@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.function.BiFunction;
 
 /*
 	function multiply(p1, p2) {
@@ -46,6 +49,18 @@ public class MainProcess {
 		return sum;
  	}
 	
+	public static double process2(BiFunction<Double, Double, Double> operation) {
+		double[] x = {1,2,3,4,5,6,7,8};
+		double[] y = {2,3,4,5,7,8,9,19};
+		
+		double sum = 0.0;
+		for(int i=0; i< x.length; ++i) {
+			sum += operation.apply(x[i], y[i]);
+		}
+		return sum;
+ 	}
+	
+	
 	public static MainProcess constructFromInt(CreateObjectFromInt factory) {
 		MainProcess value = factory.create(3);
 		return value;
@@ -73,7 +88,7 @@ public class MainProcess {
 		//There are actually four different types of method 
 		//reference.
 		
-		//TYPE 1--- Reference to a statis method.
+		//TYPE 1--- Reference to a static method.
 		//FORMAT:  ContaininigClass::staticMethodName
 		//Example   MainProcess::divide
 		System.out.println(process(MainProcess::divide));
@@ -85,13 +100,69 @@ public class MainProcess {
 		MainProcess object = new MainProcess();
 		System.out.println(process(object::add));
 
-		//Type 3 -- Gonna SKip this till tomorrow.
+		//Type 3 -- Is probably the rarest type.
+		//when you call an instance method on a class
+		//its kind of like calling a normal function, with a secret hidden
+		//parameter of "this"
 		
+		//Reference to an instance method of an arbitrary object
+		//of a particular type:
+		//Format is ContainingClass::instanceMethodName
 		
+		//Sometime you want to call an instance method---
+	    String myString="hello";
+	    myString.compareTo("hi");  // <0 if hello comes before hi.
+	                               // 0 if hello == hi
+	                               // >0 if hello comes after hi
+		//There is a function interface in java called Comparator....
+	    //Comparator<String> is a functional interface
+	    //that requires the function:
+	
+		
+	    Comparator<String> myComparable = String::compareTo;
+	    myComparable.compare("hello", "hi"); 
+	    //The above line does  thje same thing as:
+	    "hello".compareTo("hi");
+	           
+	    
 		//Type 4 -- Reference to a constructor
 		//Format: ContainingClass::new
 		MainProcess value = constructFromInt(MainProcess::new);
-		System.out.println(value);					
+		System.out.println(value);
+		
+		
+		//It is really that we can do method references.
+		//They do have some downsides though:
+		//1. We still need to have an interface definition, which is
+		//  a lot of extra code.
+		//2. A method reference is great, but often you just want to
+		//  define a function real quickly and use it.and for that we 
+		//  need something else..
+		
+		//The thing that we are going to teach right now is that Java
+		//has something lambda expressions.
+		//Essentially lambda expressions are Java's way of making arrow
+		//functions, and the syntax is ALMOST the same.
+		//MathOperation variable = (a, b) -> a*b;
+		System.out.println(process((a,b) -> {return a+b;}));
+		System.out.println("Done");
+		
+		Integer[] numbers = {6, 1, 7, 5, 3, 0, 9};
+		Arrays.sort(numbers, (a, b) -> b-a);
+		for(int i=0; i<numbers.length; ++i) {
+			System.out.println(numbers[i]);
+		}
+		
+		
+		//There is one real big annoyance we still have with using lambda 
+		//functions, and that is that we STILL have to define those functional 
+		//interface specification.
+		
+		//But that's a fact of life with Java...there is one trick you can
+		//use to make your life a little easier....and that is there is a
+		//package in java called java.util.function
+		System.out.println(process2((a,b) -> a*b));
+		
 	}
 	
 	
